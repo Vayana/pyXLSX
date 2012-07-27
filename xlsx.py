@@ -1,4 +1,4 @@
-from __future__ import division
+
 import zipfile, re
 from xml.dom import minidom
 from range_alpha import range_alpha
@@ -29,33 +29,33 @@ class workbook(object):
     @classmethod
     def extend(cls, fn):
         if not ('func_code' in dir(fn)): raise RuntimeError('Cannot Extend Workbook Formulas with Nonfunctions')
-        key = fn.func_name
+        key = fn.__name__
         setattr(cls, key.upper(), classmethod(lambda self, *args: fn(*args)))
     
     @classmethod
     def flatten(cls, fn):
         if not ('func_code' in dir(fn)): raise RuntimeError('Cannot Extend Workbook Formulas with Nonfunctions')
         _lambda = lambda *list: fn(_flatten(list))
-        _lambda.func_name = fn.func_name
+        _lambda.__name__ = fn.__name__
         return _lambda
     
     @classmethod
     def singular(cls, fn):
         if not ('func_code' in dir(fn)): raise RuntimeError('Cannot Extend Workbook Formulas with Nonfunctions')
         _lambda = lambda *list: fn(_flatten(list)[0])
-        _lambda.func_name = fn.func_name
+        _lambda.__name__ = fn.__name__
         return _lambda
     @classmethod
     def plural(cls, fn):
         if not ('func_code' in dir(fn)): raise RuntimeError('Cannot Extend Workbook Formulas with Nonfunctions')
         _lambda = lambda *args: fn(*args)
-        _lambda.func_name = fn.func_name
+        _lambda.__name__ = fn.__name__
         return _lambda
     @classmethod
     def void(cls, fn):
         if not ('func_code' in dir(fn)): raise RuntimeError('Cannot Extend Workbook Formulas with Nonfunctions')
         _lambda = lambda *args: fn()
-        _lambda.func_name = fn.func_name
+        _lambda.__name__ = fn.__name__
         return _lambda
     
     class DOM():
@@ -96,13 +96,13 @@ class workbook(object):
                 self.i_sheets.append(obj)
                 self.__dict__[sheet._attrs['name'].value]= obj
         def keys(self):
-            return self.sheets.keys()
+            return list(self.sheets.keys())
         
         def __getitem__(self, key):
             if isinstance(key, int):
                 if key >= len(self.i_sheets): key = len(self.i_sheets)-1
                 return self.i_sheets[key]
-            if key not in self.sheets.keys(): return None
+            if key not in list(self.sheets.keys()): return None
             return self.sheets[key]
         
         def __iter__(self):
@@ -114,7 +114,7 @@ class workbook(object):
         def __repr__(self):
             return str(self.sheets)
         def __setattr__(self, attr, val):
-            if attr not in self.__dict__.keys():
+            if attr not in list(self.__dict__.keys()):
                 if type(val) in [str]:
                     #Handles String Attributes
                     #This will be a new file
@@ -179,24 +179,24 @@ class workbook(object):
             return  "<Sheet '%s'>" % self.name
         
         def keys(self):
-            return self.cells.keys()
+            return list(self.cells.keys())
         
         def __getattribute__(self, attr):
-            if attr not in self.cells.keys():
+            if attr not in list(self.cells.keys()):
                 return None
             _return = self.__dict__[attr]
             #if isinstance(_return, workbook.cell): _return = _return.val
             return _return
             
         def __getitem__(self, key):
-            if key not in self.cells.keys():
+            if key not in list(self.cells.keys()):
                 return None
             _return = self.cells[key]
             #if isinstance(_return, workbook.cell): _return = _return.val
             return _return
         
         def __iter__(self):
-            _keys = self.cells.keys()
+            _keys = list(self.cells.keys())
             _keys.sort()
             return iter(_keys)
         

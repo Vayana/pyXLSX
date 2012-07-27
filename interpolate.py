@@ -71,7 +71,7 @@ def REPLACE(match):
 def interpolate(text):
     rn = re.compile(r"[a-z|A-Z]+[0-9]+\:*[a-z|A-Z]+[0-9]+\:*")
     fn = re.compile(r"(?<=\(|\))[a-z|A-Z]*(?=\()")
-    print rn.sub(REPLACE, fn.sub(PARSE, text))
+    print(rn.sub(REPLACE, fn.sub(PARSE, text)))
 
 interpolate("6+(SUM(Z1:AH1)+3)")
 #6+(worksheet.SUM(['Z1', 'AA1', 'AB1', 'AC1', 'AD1', 'AE1', 'AF1', 'AG1', 'AH1'])+3)
