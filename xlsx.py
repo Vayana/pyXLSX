@@ -28,32 +28,32 @@ class workbook(object):
     
     @classmethod
     def extend(cls, fn):
-        if not ('func_code' in dir(fn)): raise RuntimeError('Cannot Extend Workbook Formulas with Nonfunctions')
+        if not ('__code__' in dir(fn)): raise RuntimeError('Cannot Extend Workbook Formulas with Nonfunctions')
         key = fn.__name__
         setattr(cls, key.upper(), classmethod(lambda self, *args: fn(*args)))
     
     @classmethod
     def flatten(cls, fn):
-        if not ('func_code' in dir(fn)): raise RuntimeError('Cannot Extend Workbook Formulas with Nonfunctions')
+        if not ('__code__' in dir(fn)): raise RuntimeError('Cannot Extend Workbook Formulas with Nonfunctions')
         _lambda = lambda *list: fn(_flatten(list))
         _lambda.__name__ = fn.__name__
         return _lambda
     
     @classmethod
     def singular(cls, fn):
-        if not ('func_code' in dir(fn)): raise RuntimeError('Cannot Extend Workbook Formulas with Nonfunctions')
+        if not ('__code__' in dir(fn)): raise RuntimeError('Cannot Extend Workbook Formulas with Nonfunctions')
         _lambda = lambda *list: fn(_flatten(list)[0])
         _lambda.__name__ = fn.__name__
         return _lambda
     @classmethod
     def plural(cls, fn):
-        if not ('func_code' in dir(fn)): raise RuntimeError('Cannot Extend Workbook Formulas with Nonfunctions')
+        if not ('__code__' in dir(fn)): raise RuntimeError('Cannot Extend Workbook Formulas with Nonfunctions')
         _lambda = lambda *args: fn(*args)
         _lambda.__name__ = fn.__name__
         return _lambda
     @classmethod
     def void(cls, fn):
-        if not ('func_code' in dir(fn)): raise RuntimeError('Cannot Extend Workbook Formulas with Nonfunctions')
+        if not ('__code__' in dir(fn)): raise RuntimeError('Cannot Extend Workbook Formulas with Nonfunctions')
         _lambda = lambda *args: fn()
         _lambda.__name__ = fn.__name__
         return _lambda
@@ -181,7 +181,7 @@ class workbook(object):
         def keys(self):
             return list(self.cells.keys())
         
-        def __getattribute__(self, attr):
+        def __getattr__(self, attr):
             if attr not in list(self.cells.keys()):
                 return None
             _return = self.__dict__[attr]
